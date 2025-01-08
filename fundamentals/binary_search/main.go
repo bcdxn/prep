@@ -4,7 +4,8 @@ import "fmt"
 
 func main() {
 	haystack := []int{1, 3, 3, 4, 5, 6, 7, 8}
-	i := binarySearch(haystack, 6)
+	needle := 6
+	i := binarySearch(haystack, needle)
 	fmt.Println("index found:", i)
 }
 
@@ -13,14 +14,14 @@ func binarySearch(haystack []int, needle int) int {
 	r := len(haystack) - 1
 
 	for l <= r {
-		mid := (l + r) / 2
+		m := (l + r) / 2
 
-		if needle < haystack[mid] {
-			r = mid - 1
-		} else if needle > haystack[mid] {
-			l = mid + 1
+		if needle < haystack[m] {
+			r = m - 1
+		} else if needle > haystack[m] {
+			l = m + 1
 		} else {
-			return mid
+			return m
 		}
 	}
 
