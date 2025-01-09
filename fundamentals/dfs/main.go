@@ -25,7 +25,11 @@ func dfs(m [][]int, r int, c int, visited map[string]struct{}) int {
 	}
 
 	// out of bounds base case
-	if r < 0 || c < 0 || r >= rows || c >= cols {
+	if r < 0 || r >= rows || c < 0 || c >= cols {
+		return 0
+	}
+	// blocked base case
+	if m[r][c] == 1 {
 		return 0
 	}
 	// already visited base case
@@ -33,19 +37,21 @@ func dfs(m [][]int, r int, c int, visited map[string]struct{}) int {
 	if _, ok := visited[visitKey]; ok {
 		return 0
 	}
-	// path complete base case
+	// reached the end base case
 	if r == rows-1 && c == cols-1 {
 		return 1
 	}
 
-	// mark node as visited
+	// visiting new node
 	visited[visitKey] = struct{}{}
-
 	count := 0
+
 	count += dfs(m, r+1, c, visited)
 	count += dfs(m, r-1, c, visited)
 	count += dfs(m, r, c+1, visited)
 	count += dfs(m, r, c-1, visited)
+
+	delete(visited, visitKey)
 
 	return count
 }
