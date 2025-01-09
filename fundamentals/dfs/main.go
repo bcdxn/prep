@@ -11,7 +11,7 @@ func main() {
 	}
 
 	paths := dfs(m, 0, 0, make(map[string]struct{}))
-	fmt.Println("paths:", paths)
+	fmt.Println("paths:", paths) // 2 paths
 }
 
 func dfs(m [][]int, r int, c int, visited map[string]struct{}) int {
