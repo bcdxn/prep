@@ -42,8 +42,7 @@ func shortestPathBFS(m [][]int) int {
 	length := 0
 
 	for q.Size() > 0 {
-		size := q.Size()
-		for i := 0; i < size; i++ {
+		for range q.Size() {
 			t := *q.Dequeue()
 			r, c := t.R, t.C
 			// reached the destination base case
