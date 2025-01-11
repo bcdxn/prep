@@ -20,56 +20,57 @@ func main() {
 }
 
 type rc struct {
-	R int
-	C int
+	r int
+	c int
 }
 
 func shortestPathBFS(m [][]int) int {
-	rows := len(m)
-	if rows < 1 {
-		return 0
-	}
-	cols := len(m[0])
-	if cols < 1 {
-		return 0
-	}
-
 	q := queue.New[rc]()
 	visited := make(map[rc]struct{})
-	q.Enqueue(rc{R: 0, C: 0})
-	visited[rc{R: 0, C: 0}] = struct{}{}
+
+	rows := len(m)
+	if rows < 1 {
+		return -1
+	}
+
+	cols := len(m[0])
+	if cols < 1 {
+		return -1
+	}
+
+	q.Enqueue(rc{r: 0, c: 0})
+	visited[rc{r: 0, c: 0}] = struct{}{}
 
 	length := 0
 
 	for q.Size() > 0 {
 		for range q.Size() {
-			t := *q.Dequeue()
-			r, c := t.R, t.C
-			// reached the destination base case
-			if r == rows-1 && c == rows-1 {
+			node := *q.Dequeue()
+
+			if node.r == rows-1 && node.c == cols-1 {
 				return length
 			}
-			// visit neighbors (checking bounds, checking its not blocked, and checking its not already visited)
-			if _, ok := visited[rc{R: r - 1, C: c}]; !ok && r-1 >= 0 && m[r-1][c] != 1 {
-				q.Enqueue(rc{R: r - 1, C: c})
-				visited[rc{R: r - 1, C: c}] = struct{}{}
-			}
-			if _, ok := visited[rc{R: r + 1, C: c}]; !ok && r+1 < rows && m[r+1][c] != 1 {
-				q.Enqueue(rc{R: r + 1, C: c})
-				visited[rc{R: r + 1, C: c}] = struct{}{}
-			}
 
-			if _, ok := visited[rc{R: r, C: c - 1}]; !ok && c-1 >= 0 && m[r][c-1] != 1 {
-				q.Enqueue(rc{R: r, C: c - 1})
-				visited[rc{R: r, C: c - 1}] = struct{}{}
+			// add neighbors to the queue
+			if _, ok := visited[rc{r: node.r + 1, c: node.c}]; !ok && node.r+1 < rows && m[node.r+1][node.c] != 1 {
+				q.Enqueue(rc{r: node.r + 1, c: node.c})
+				visited[rc{r: node.r + 1, c: node.c}] = struct{}{}
 			}
-			if _, ok := visited[rc{R: r, C: c + 1}]; !ok && c+1 < cols && m[r][c+1] != 1 {
-				q.Enqueue(rc{R: r, C: c + 1})
-				visited[rc{R: r, C: c + 1}] = struct{}{}
+			if _, ok := visited[rc{r: node.r - 1, c: node.c}]; !ok && node.r-1 >= 0 && m[node.r-1][node.c] != 1 {
+				q.Enqueue(rc{r: node.r - 1, c: node.c})
+				visited[rc{r: node.r - 1, c: node.c}] = struct{}{}
+			}
+			if _, ok := visited[rc{r: node.r, c: node.c + 1}]; !ok && node.c+1 < cols && m[node.r][node.c+1] != 1 {
+				q.Enqueue(rc{r: node.r, c: node.c + 1})
+				visited[rc{r: node.r, c: node.c + 1}] = struct{}{}
+			}
+			if _, ok := visited[rc{r: node.r, c: node.c - 1}]; !ok && node.c-1 >= cols && m[node.r][node.c-1] != 1 {
+				q.Enqueue(rc{r: node.r, c: node.c - 1})
+				visited[rc{r: node.r, c: node.c - 1}] = struct{}{}
 			}
 		}
 		length += 1
 	}
 
-	return length
+	return -1
 }
