@@ -3,35 +3,33 @@ package main
 import "fmt"
 
 func main() {
-	t := "abcabcbb"
-
-	n := longestSubStr(t) // should print 3
-
-	fmt.Println("longest:", n)
+	var str = "abcabcbb"
+	max := maxUniqueLength(str)
+	fmt.Println("max length: ", max)
 }
 
-func longestSubStr(s string) int {
-	charSet := make(map[byte]struct{})
+func maxUniqueLength(s string) int {
+	set := make(map[byte]struct{})
+	l := 0
+	r := 0
 
-	max := 0 // max length of substring
-	l := 0   // start of window
+	max := 0
 
-	for r := range len(s) {
-		_, ok := charSet[s[r]]
+	for r < len(s) {
+		// while the character we're pointing to with our right index is in the set, walk in the left
+		// pointer, shrinking the window and remove those characters from the set
+		_, ok := set[s[r]]
 		for ok {
-			delete(charSet, s[l])
+			delete(set, s[l])
 			l++
-			_, ok = charSet[s[r]]
+			_, ok = set[s[r]]
 		}
-		charSet[s[r]] = struct{}{}
-		// finding length with index arithmetic
-		// currWindowSize := r - l + 1
-		// if currWindowSize > max {
-		// 	max = currWindowSize
-		// }
-		// find length using built in len function
-		if len(charSet) > max {
-			max = len(charSet)
+		// add current char to set to prevent duplicates and grow our window
+		set[s[r]] = struct{}{}
+		r++
+		// update max if appropriate
+		if len(set) > max {
+			max = len(set)
 		}
 	}
 
