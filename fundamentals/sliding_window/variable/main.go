@@ -24,9 +24,14 @@ func longestSubStr(s string) int {
 			_, ok = charSet[s[r]]
 		}
 		charSet[s[r]] = struct{}{}
-		currWindowSize := r - l + 1
-		if currWindowSize > max {
-			max = currWindowSize
+		// finding length with index arithmetic
+		// currWindowSize := r - l + 1
+		// if currWindowSize > max {
+		// 	max = currWindowSize
+		// }
+		// find length using built in len function
+		if len(charSet) > max {
+			max = len(charSet)
 		}
 	}
 
