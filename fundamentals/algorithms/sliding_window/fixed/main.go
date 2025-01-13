@@ -3,24 +3,26 @@ package main
 import "fmt"
 
 func main() {
-	nums := []int{8, 3, -2, 4, 5, -1, 0, 5, 3, 9, -6}
-	res := maxSumInWindow(nums, 5)
-	fmt.Println("max:", res) // 18
+	var nums = []int{8, 3, -2, 4, 5, -1, 0, 5, 3, 9, -6}
+	var k = 5
+
+	max := maxSum(nums, k)
+
+	fmt.Println("max sum: ", max)
 }
 
-func maxSumInWindow(nums []int, k int) int {
-	if k > len(nums) {
+func maxSum(nums []int, k int) int {
+	if len(nums) < k {
 		return 0
 	}
-	windowSum := 0
 
-	// sum initial window
+	// calculate initial window sum
+	max := 0
 	for i := 0; i < k; i++ {
-		windowSum += nums[i]
+		max += nums[i]
 	}
-	max := windowSum
-
-	// slide window and update sum
+	// slide the window
+	windowSum := max
 	for i := 0; i < len(nums)-k; i++ {
 		windowSum = windowSum - nums[i] + nums[i+k]
 		if windowSum > max {
