@@ -24,9 +24,20 @@ func NewBST[T constraints.Ordered]() *BST[T] {
 
 func (t *BST[T]) StringInOrder() string {
 	s := make([]string, 0)
-	return "[ " + strings.Join(bstPrintInOrder(t.root, s), " ") + " ]"
+	return "[ " + strings.Join(bstStringInOrder(t.root, s), " ") + " ]"
 }
 
+func (t *BST[T]) StringPreOrder() string {
+	s := make([]string, 0)
+	return "[ " + strings.Join(bstStringPreOrder(t.root, s), " ") + " ]"
+}
+
+func (t *BST[T]) StringPostOrder() string {
+	s := make([]string, 0)
+	return "[ " + strings.Join(bstStringPostOrder(t.root, s), " ") + " ]"
+}
+
+// Insert adds an item to the tree (duplicates are not allowed).
 func (t *BST[T]) Insert(item T) error {
 	r, err := bstInsert(t.root, item)
 	if err != nil {
@@ -37,6 +48,7 @@ func (t *BST[T]) Insert(item T) error {
 	return nil
 }
 
+// Remove removes an item from the tree if it exists.
 func (t *BST[T]) Remove(item T) error {
 	if t.root == nil {
 		return errors.New("cannot perform Remove on an empty tree")
@@ -45,10 +57,12 @@ func (t *BST[T]) Remove(item T) error {
 	return nil
 }
 
+// Find looks up an element in the tree and returns an error if it does not exist.
 func (t *BST[T]) Find(item T) (T, error) {
 	return bstFind(t.root, item)
 }
 
+// FindMin returns the smallest element in the tree.
 func (t *BST[T]) FindMin() (T, error) {
 	n := bstFindMin(t.root)
 	if n != nil {
@@ -59,6 +73,7 @@ func (t *BST[T]) FindMin() (T, error) {
 	return item, errors.New("cannot perform FindMin on empty tree")
 }
 
+// FindMax  returns the largest element in the tree.
 func (t *BST[T]) FindMax() (T, error) {
 	n := bstFindMax(t.root)
 	if n != nil {
@@ -71,24 +86,6 @@ func (t *BST[T]) FindMax() (T, error) {
 
 /* private helpers
 ------------------------------------------------------------------------------------------------- */
-
-func bstPrintInOrder[T constraints.Ordered](n *BSTNode[T], s []string) []string {
-	if n == nil {
-		return s
-	}
-
-	if n.Left != nil {
-		s = bstPrintInOrder(n.Left, s)
-	}
-
-	s = append(s, fmt.Sprintf("%v", n.Item))
-
-	if n.Right != nil {
-		s = bstPrintInOrder(n.Right, s)
-	}
-
-	return s
-}
 
 func bstInsert[T constraints.Ordered](root *BSTNode[T], item T) (*BSTNode[T], error) {
 	if root == nil {
@@ -182,4 +179,40 @@ func bstFindMax[T constraints.Ordered](root *BSTNode[T]) *BSTNode[T] {
 	}
 
 	return root
+}
+
+func bstStringInOrder[T constraints.Ordered](n *BSTNode[T], s []string) []string {
+	if n == nil {
+		return s
+	}
+
+	s = bstStringInOrder(n.Left, s)
+	s = append(s, fmt.Sprintf("%v", n.Item))
+	s = bstStringInOrder(n.Right, s)
+
+	return s
+}
+
+func bstStringPreOrder[T constraints.Ordered](n *BSTNode[T], s []string) []string {
+	if n == nil {
+		return s
+	}
+
+	s = append(s, fmt.Sprintf("%v", n.Item))
+	s = bstStringPreOrder(n.Left, s)
+	s = bstStringPreOrder(n.Right, s)
+
+	return s
+}
+
+func bstStringPostOrder[T constraints.Ordered](n *BSTNode[T], s []string) []string {
+	if n == nil {
+		return s
+	}
+
+	s = bstStringPostOrder(n.Left, s)
+	s = bstStringPostOrder(n.Right, s)
+	s = append(s, fmt.Sprintf("%v", n.Item))
+
+	return s
 }

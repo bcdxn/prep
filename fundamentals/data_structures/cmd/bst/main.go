@@ -40,5 +40,7 @@ func main() {
 	fmt.Println("max:", max)
 
 	t.Remove(5)
-	fmt.Println(t.StringInOrder())
+	fmt.Println("in order: ", t.StringInOrder())
+	fmt.Println("pre order: ", t.StringPreOrder())
+	fmt.Println("post order: ", t.StringPostOrder())
 }
