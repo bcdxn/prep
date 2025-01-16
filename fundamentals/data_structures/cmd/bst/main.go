@@ -43,4 +43,6 @@ func main() {
 	fmt.Println("in order: ", t.StringInOrder())
 	fmt.Println("pre order: ", t.StringPreOrder())
 	fmt.Println("post order: ", t.StringPostOrder())
+	fmt.Println("in order:")
+	t.PrintBFS()
 }

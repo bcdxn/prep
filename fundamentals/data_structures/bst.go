@@ -3,6 +3,7 @@ package ds
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"golang.org/x/exp/constraints"
@@ -20,21 +21,6 @@ type BST[T constraints.Ordered] struct {
 
 func NewBST[T constraints.Ordered]() *BST[T] {
 	return &BST[T]{}
-}
-
-func (t *BST[T]) StringInOrder() string {
-	s := make([]string, 0)
-	return "[ " + strings.Join(bstStringInOrder(t.root, s), " ") + " ]"
-}
-
-func (t *BST[T]) StringPreOrder() string {
-	s := make([]string, 0)
-	return "[ " + strings.Join(bstStringPreOrder(t.root, s), " ") + " ]"
-}
-
-func (t *BST[T]) StringPostOrder() string {
-	s := make([]string, 0)
-	return "[ " + strings.Join(bstStringPostOrder(t.root, s), " ") + " ]"
 }
 
 // Insert adds an item to the tree (duplicates are not allowed).
@@ -82,6 +68,48 @@ func (t *BST[T]) FindMax() (T, error) {
 
 	var item T
 	return item, errors.New("cannot perform FindMax on empty tree")
+}
+
+func (t *BST[T]) StringInOrder() string {
+	s := make([]string, 0)
+	return "[ " + strings.Join(bstStringInOrder(t.root, s), " ") + " ]"
+}
+
+func (t *BST[T]) StringPreOrder() string {
+	s := make([]string, 0)
+	return "[ " + strings.Join(bstStringPreOrder(t.root, s), " ") + " ]"
+}
+
+func (t *BST[T]) StringPostOrder() string {
+	s := make([]string, 0)
+	return "[ " + strings.Join(bstStringPostOrder(t.root, s), " ") + " ]"
+}
+
+func (t *BST[T]) PrintBFS() {
+	if t.root == nil {
+		fmt.Println("[ ]")
+		return
+	}
+
+	q := NewQueue[*BSTNode[T]]()
+	q.Enqueue(t.root)
+
+	level := 0
+	for q.Size() > 0 {
+		str := make([]string, 0)
+		str = append(str, strconv.Itoa(level)+": ")
+		for range q.Size() {
+			n, _ := q.Dequeue()
+
+			if n != nil {
+				str = append(str, fmt.Sprintf("%v", n.Item))
+				q.Enqueue(n.Left)
+				q.Enqueue(n.Right)
+			}
+		}
+		fmt.Println(strings.Join(str, " "))
+		level += 1
+	}
 }
 
 /* private helpers
