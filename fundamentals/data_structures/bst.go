@@ -96,8 +96,7 @@ func (t *BST[T]) PrintBFS() {
 
 	level := 0
 	for q.Size() > 0 {
-		str := make([]string, 0)
-		str = append(str, strconv.Itoa(level)+": ")
+		str := []string{strconv.Itoa(level) + ": "}
 		for range q.Size() {
 			n, _ := q.Dequeue()
 
