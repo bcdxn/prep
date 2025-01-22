@@ -16,7 +16,7 @@ type BSTNode[T constraints.Ordered] struct {
 }
 
 type BST[T constraints.Ordered] struct {
-	root *BSTNode[T]
+	Root *BSTNode[T]
 }
 
 func NewBST[T constraints.Ordered]() *BST[T] {
@@ -25,32 +25,32 @@ func NewBST[T constraints.Ordered]() *BST[T] {
 
 // Insert adds an item to the tree (duplicates are not allowed).
 func (t *BST[T]) Insert(item T) error {
-	r, err := bstInsert(t.root, item)
+	r, err := bstInsert(t.Root, item)
 	if err != nil {
 		return err
 	}
 
-	t.root = r
+	t.Root = r
 	return nil
 }
 
 // Remove removes an item from the tree if it exists.
 func (t *BST[T]) Remove(item T) error {
-	if t.root == nil {
+	if t.Root == nil {
 		return errors.New("cannot perform Remove on an empty tree")
 	}
-	t.root = bstRemove(t.root, item)
+	t.Root = bstRemove(t.Root, item)
 	return nil
 }
 
 // Find looks up an element in the tree and returns an error if it does not exist.
 func (t *BST[T]) Find(item T) (T, error) {
-	return bstFind(t.root, item)
+	return bstFind(t.Root, item)
 }
 
 // FindMin returns the smallest element in the tree.
 func (t *BST[T]) FindMin() (T, error) {
-	n := bstFindMin(t.root)
+	n := bstFindMin(t.Root)
 	if n != nil {
 		return n.Item, nil
 	}
@@ -61,7 +61,7 @@ func (t *BST[T]) FindMin() (T, error) {
 
 // FindMax  returns the largest element in the tree.
 func (t *BST[T]) FindMax() (T, error) {
-	n := bstFindMax(t.root)
+	n := bstFindMax(t.Root)
 	if n != nil {
 		return n.Item, nil
 	}
@@ -72,27 +72,27 @@ func (t *BST[T]) FindMax() (T, error) {
 
 func (t *BST[T]) StringInOrder() string {
 	s := make([]string, 0)
-	return "[ " + strings.Join(bstStringInOrder(t.root, s), " ") + " ]"
+	return "[ " + strings.Join(bstStringInOrder(t.Root, s), " ") + " ]"
 }
 
 func (t *BST[T]) StringPreOrder() string {
 	s := make([]string, 0)
-	return "[ " + strings.Join(bstStringPreOrder(t.root, s), " ") + " ]"
+	return "[ " + strings.Join(bstStringPreOrder(t.Root, s), " ") + " ]"
 }
 
 func (t *BST[T]) StringPostOrder() string {
 	s := make([]string, 0)
-	return "[ " + strings.Join(bstStringPostOrder(t.root, s), " ") + " ]"
+	return "[ " + strings.Join(bstStringPostOrder(t.Root, s), " ") + " ]"
 }
 
 func (t *BST[T]) PrintBFS() {
-	if t.root == nil {
+	if t.Root == nil {
 		fmt.Println("[ ]")
 		return
 	}
 
 	q := NewQueue[*BSTNode[T]]()
-	q.Enqueue(t.root)
+	q.Enqueue(t.Root)
 
 	level := 0
 	for q.Size() > 0 {
