@@ -1,45 +1,32 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-
-	ds "github.com/bcdxn/leetcode/fundamentals/data_structures"
 )
 
-var matrix = [][]int{
-	{0, 0, 0, 0},
-	{1, 1, 0, 0},
-	{0, 0, 0, 1},
-	{0, 1, 0, 0},
-}
-
 func main() {
+	matrix := [][]int{
+		{0, 0, 0, 0},
+		{1, 1, 0, 0},
+		{0, 0, 0, 1},
+		{0, 1, 0, 0},
+	}
+
 	shortestPath := bfs(matrix)
 	fmt.Println("shortest path: ", shortestPath)
 }
 
-type rc struct {
-	r int
-	c int
-}
-
 func bfs(m [][]int) int {
 	rows := len(m)
-	if rows < 1 {
-		return -1
-	}
 	cols := len(m[0])
-	if cols < 1 {
-		return -1
-	}
 
-	length := 0
-
-	q := ds.NewQueue[rc]()
+	q := queue{}
 	visited := make(map[rc]struct{})
 
 	q.Enqueue(rc{0, 0})
 	visited[rc{0, 0}] = struct{}{}
+	length := 0
 
 	for q.Size() > 0 {
 		for range q.Size() {
@@ -53,14 +40,17 @@ func bfs(m [][]int) int {
 				q.Enqueue(rc{n.r - 1, n.c})
 				visited[rc{n.r - 1, n.c}] = struct{}{}
 			}
+
 			if _, ok := visited[rc{n.r + 1, n.c}]; !ok && n.r+1 < rows && m[n.r+1][n.c] != 1 {
 				q.Enqueue(rc{n.r + 1, n.c})
 				visited[rc{n.r + 1, n.c}] = struct{}{}
 			}
+
 			if _, ok := visited[rc{n.r, n.c - 1}]; !ok && n.c-1 >= 0 && m[n.r][n.c-1] != 1 {
 				q.Enqueue(rc{n.r, n.c - 1})
 				visited[rc{n.r, n.c - 1}] = struct{}{}
 			}
+
 			if _, ok := visited[rc{n.r, n.c + 1}]; !ok && n.c+1 < cols && m[n.r][n.c+1] != 1 {
 				q.Enqueue(rc{n.r, n.c + 1})
 				visited[rc{n.r, n.c + 1}] = struct{}{}
@@ -70,4 +60,32 @@ func bfs(m [][]int) int {
 	}
 
 	return -1
+}
+
+type rc struct {
+	r int
+	c int
+}
+
+type queue struct {
+	q []rc
+}
+
+func (q *queue) Enqueue(node rc) {
+	q.q = append(q.q, node)
+}
+
+func (q *queue) Dequeue() (rc, error) {
+	if len(q.q) < 1 {
+		return rc{}, errors.New("cannot perform dequeue on empty queue")
+	}
+
+	node := q.q[0]
+	q.q = q.q[1:]
+
+	return node, nil
+}
+
+func (q queue) Size() int {
+	return len(q.q)
 }
