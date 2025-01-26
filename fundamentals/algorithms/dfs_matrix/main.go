@@ -3,60 +3,55 @@ package main
 import "fmt"
 
 func main() {
-	m := [][]int{
+	matrix := [][]int{
 		{0, 0, 0, 0},
 		{1, 1, 0, 0},
 		{0, 0, 0, 1},
 		{0, 1, 0, 0},
 	}
 
-	visited := make(map[rc]struct{})
-	paths := dfs(m, 0, 0, visited)
-	fmt.Println("num paths: ", paths)
-}
-
-type rc struct {
-	r int
-	c int
+	paths := dfs(matrix, 0, 0, make(map[rc]struct{}))
+	fmt.Println("paths: ", paths)
 }
 
 func dfs(m [][]int, r int, c int, visited map[rc]struct{}) int {
 	rows := len(m)
-	if rows < 1 {
-		return 0
-	}
-
 	cols := len(m[0])
-	if cols < 1 {
-		return 0
-	}
 
-	// out of bounds
-	if r < 0 || r >= rows || c < 0 || c >= cols {
-		return 0
-	}
-	// already visited
-	if _, ok := visited[rc{r, c}]; ok {
-		return 0
-	}
-	// blocked
-	if m[r][c] == 1 {
-		return 0
-	}
-	// reached destination
 	if r == rows-1 && c == cols-1 {
 		return 1
 	}
 
 	count := 0
-	visited[rc{r, c}] = struct{}{}
 
-	count += dfs(m, r-1, c, visited)
-	count += dfs(m, r+1, c, visited)
-	count += dfs(m, r, c-1, visited)
-	count += dfs(m, r, c+1, visited)
+	if _, ok := visited[rc{r - 1, c}]; !ok && r-1 >= 0 && m[r-1][c] != 1 {
+		visited[rc{r - 1, c}] = struct{}{}
+		count += dfs(m, r-1, c, visited)
+		delete(visited, rc{r - 1, c})
+	}
 
-	delete(visited, rc{r, c})
+	if _, ok := visited[rc{r + 1, c}]; !ok && r+1 < rows && m[r+1][c] != 1 {
+		visited[rc{r + 1, c}] = struct{}{}
+		count += dfs(m, r+1, c, visited)
+		delete(visited, rc{r + 1, c})
+	}
+
+	if _, ok := visited[rc{r, c - 1}]; !ok && c-1 >= 0 && m[r][c-1] != 1 {
+		visited[rc{r, c - 1}] = struct{}{}
+		count += dfs(m, r, c-1, visited)
+		delete(visited, rc{r, c - 1})
+	}
+
+	if _, ok := visited[rc{r, c + 1}]; !ok && c+1 < cols && m[r][c+1] != 1 {
+		visited[rc{r, c + 1}] = struct{}{}
+		count += dfs(m, r, c+1, visited)
+		delete(visited, rc{r, c + 1})
+	}
 
 	return count
+}
+
+type rc struct {
+	r int
+	c int
 }
