@@ -21,4 +21,10 @@ func main() {
 	fmt.Println(h.String())
 	h.Push(17)
 	fmt.Println(h.String())
+	val, _ := h.Pop()
+	fmt.Println("popped: ", val)
+	fmt.Println(h.String())
+	val, _ = h.Pop()
+	fmt.Println("popped: ", val)
+	fmt.Println(h.String())
 }
