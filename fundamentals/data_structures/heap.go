@@ -8,75 +8,86 @@ import (
 )
 
 type MinHeap[T constraints.Ordered] struct {
-	h []T
+	s []T
 }
 
-// Add an item to the heap and maintain heap properties.
 func (h *MinHeap[T]) Push(item T) {
-	if len(h.h) < 2 {
+	// Make backing slice 0-indexed to make the pointer arithmetic simpler
+	if len(h.s) < 2 {
 		var zero T
-		h.h = []T{zero, item}
-		return
+		h.s = []T{zero}
 	}
+	// Maintain 'complete tree' property of heap
+	h.s = append(h.s, item)
 
-	// add item to the end to maintain complete property
-	h.h = append(h.h, item)
-	// percolate up
-	i := len(h.h) - 1
-	for {
-		if h.h[i] < h.h[parent(i)] {
-			h.h[i], h.h[parent(i)] = h.h[parent(i)], h.h[i]
-			i = parent(i)
+	// Maintain 'order' property of heap by percolating up
+	i := len(h.s) - 1
+	for i > 0 {
+		p := parent(i)
+		if h.s[i] < h.s[p] {
+			h.s[i], h.s[p] = h.s[p], h.s[i]
+			i = p
 		} else {
 			break
 		}
 	}
 }
 
-// Remove the item from the top of the heap and maintain heap properties.
 func (h *MinHeap[T]) Pop() (T, error) {
-	if len(h.h) < 2 {
+	if len(h.s) < 2 {
 		var zero T
-		return zero, errors.New("cannot perform pop on empty heap")
+		return zero, errors.New("cannot perform 'Pop' on empty heap")
 	}
-	// take current top of heap
-	item := h.h[1]
-	// copy last item in heap to top and truncate last item
-	h.h[1] = h.h[len(h.h)-1]
-	h.h = h.h[:len(h.h)-1]
-	// percolate down
+	item := h.s[1]
+
+	if len(h.s) < 3 {
+		var zero T
+		h.s = []T{zero}
+		return item, nil
+	}
+
+	// move 'bottom' item in heap to the root
+	h.s[1] = h.s[len(h.s)-1]
+	h.s = h.s[:len(h.s)-1]
+
+	// Maintain 'complete tree' property of heap by perocolating new root down
 	i := 1
-	for left(i) < len(h.h) {
-		// has a right child, right child < left child, item > right child
-		if right(i) < len(h.h) && h.h[right(i)] < h.h[left(i)] && h.h[i] > h.h[right(i)] {
-			h.h[i], h.h[right(i)] = h.h[right(i)], h.h[i]
-			i = right(i)
-		} else if h.h[i] > h.h[left(i)] {
-			h.h[i], h.h[left(i)] = h.h[left(i)], h.h[i]
-			i = left(i)
+	for left(i) < len(h.s) {
+		l := left(i)
+		r := right(i)
+		if r < len(h.s) && h.s[r] < h.s[l] && h.s[i] > h.s[r] {
+			// perclate down to right child
+			h.s[i], h.s[r] = h.s[r], h.s[i]
+			i = r
+		} else if h.s[l] < h.s[i] {
+			// percolate down to left child
+			h.s[i], h.s[l] = h.s[l], h.s[i]
+			i = l
 		} else {
+			// percolated to correct position
 			break
 		}
 	}
+
 	return item, nil
 }
 
-// Return a string representation of the heap.
 func (h *MinHeap[T]) String() string {
-	return fmt.Sprintf("%v", h.h)
+	return fmt.Sprintf("%v", h.s)
 }
 
-// get the index into the backing slice of the parent of a given node index.
-func parent(i int) int {
-	return i / 2
-}
+// func Heapify[T constraints.Ordered](s []T) MinHeap[T] {
 
-// get index into the backing slice of the left child of a given node index.
+// }
+
 func left(i int) int {
 	return i * 2
 }
 
-// get the index into the backing slice of the right child of a given node index.
 func right(i int) int {
 	return i*2 + 1
+}
+
+func parent(i int) int {
+	return i / 2
 }

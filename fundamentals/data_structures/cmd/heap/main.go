@@ -18,13 +18,13 @@ func main() {
 	h.Push(65)
 	h.Push(30)
 
-	fmt.Println(h.String())
+	fmt.Println(h.String()) // [0 14 19 16 21 26 19 68 65 30]
 	h.Push(17)
-	fmt.Println(h.String())
+	fmt.Println(h.String()) // [0 14 17 16 21 19 19 68 65 30 26]
 	val, _ := h.Pop()
 	fmt.Println("popped: ", val)
-	fmt.Println(h.String())
+	fmt.Println(h.String()) // [0 16 17 19 21 19 26 68 65 30]
 	val, _ = h.Pop()
 	fmt.Println("popped: ", val)
-	fmt.Println(h.String())
+	fmt.Println(h.String()) // [0 17 19 19 21 30 26 68 65]
 }
