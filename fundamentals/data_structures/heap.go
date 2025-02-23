@@ -73,12 +73,40 @@ func (h *MinHeap[T]) Pop() (T, error) {
 }
 
 func (h *MinHeap[T]) String() string {
-	return fmt.Sprintf("%v", h.s)
+	return fmt.Sprintf("%v", h.s[1:])
 }
 
-// func Heapify[T constraints.Ordered](s []T) MinHeap[T] {
+func Heapify[T constraints.Ordered](items []T) MinHeap[T] {
+	// shift the first element to the end of the backing array to get 1-based index
+	var zero T
+	s := append(items, items[0])
+	s[0] = zero
 
-// }
+	h := MinHeap[T]{s}
+	// half of the tree will not have children so we can skip those as they will, by definition,
+	// follow the heap order property
+	i := (len(s) - 1) / 2
+	for i > 0 {
+		j := i
+		// for each node in the heap, percolate down until it satisifies the heap order property
+		for left(j) < len(h.s) {
+			l := left(j)
+			r := right(j)
+			if r < len(h.s) && h.s[r] < h.s[l] && h.s[j] > h.s[r] {
+				h.s[j], h.s[r] = h.s[r], h.s[j]
+				j = r
+			} else if h.s[j] > h.s[l] {
+				h.s[l], h.s[j] = h.s[j], h.s[l]
+				j = l
+			} else {
+				break
+			}
+		}
+		i--
+	}
+
+	return h
+}
 
 func left(i int) int {
 	return i * 2
