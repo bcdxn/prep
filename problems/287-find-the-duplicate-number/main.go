@@ -2,6 +2,10 @@ package main
 
 import "fmt"
 
+// A medium problem that is quite simple IFF you can make the connection that the array of numbers
+// represents a linked-list where each value in the array points to an index in the array (e.g. the
+// _next_ node in the linked list). Then it's about finding the start of a cycle in the list using
+// Floyd's algorithm.
 func main() {
 	nums := []int{1, 3, 4, 2, 2}
 	dupe := findDuplicate(nums)
