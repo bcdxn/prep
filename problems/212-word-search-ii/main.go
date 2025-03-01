@@ -16,7 +16,6 @@ func main() {
 }
 
 func findWords(board [][]byte, words []string) []string {
-
 	// build Trie
 	t := newTrie()
 	for _, word := range words {
@@ -52,68 +51,57 @@ type Trie struct {
 
 func dfsWrapper(m [][]byte, r, c int, t *Trie) []string {
 	foundWords := map[string]struct{}{}
+	rows := len(m)
+	cols := len(m[0])
+	visited := map[rc]struct{}{}
 
 	var dfs func(
-		m [][]byte,
 		r, c int,
-		visited map[rc]struct{},
 		word string,
-		t *Trie,
+		node *TrieNode,
 	)
 
 	dfs = func(
-		m [][]byte,
 		r, c int,
-		visited map[rc]struct{},
 		word string,
-		t *Trie,
+		node *TrieNode,
 	) {
-		rows := len(m)
-		cols := len(m[0])
-
 		// can't revisit a node
 		if _, ok := visited[rc{r, c}]; ok {
 			return
 		}
 		// can't run out of bounds
-		if r < 0 || r >= rows {
-			return
-		}
-		if c < 0 || c >= cols {
+		if r < 0 || r >= rows || c < 0 || c >= cols {
 			return
 		}
 		// no word with the given prefix exists; stop DFS
-		if !t.ContainsPrefix(word) {
+		if _, ok := node.children[rune(m[r][c])]; !ok {
 			return
 		}
-		// we've found the word; stop DFS
-		if t.Search(word) {
+		// update node as visited
+		visited[rc{r, c}] = struct{}{}
+		// update which node in the Trie we're on
+		node = node.children[rune(m[r][c])]
+		// build our word as we recurse
+		word = word + string(m[r][c])
+		// If we're at an isWord node, add the completed word to the set
+		if node.isWord {
 			foundWords[word] = struct{}{}
 		}
-
-		visited[rc{r, c}] = struct{}{}
-		if r-1 >= 0 {
-			dfs(m, r-1, c, visited, word+string(m[r-1][c]), t)
-		}
-		if c+1 < cols {
-			dfs(m, r, c+1, visited, word+string(m[r][c+1]), t)
-		}
-		if r+1 < rows {
-			dfs(m, r+1, c, visited, word+string(m[r+1][c]), t)
-		}
-		if c-1 >= 0 {
-			dfs(m, r, c-1, visited, word+string(m[r][c-1]), t)
-		}
+		// Recurse
+		dfs(r-1, c, word, node)
+		dfs(r, c+1, word, node)
+		dfs(r+1, c, word, node)
+		dfs(r, c-1, word, node)
+		// Remove the node from the visited set on wait back up
 		delete(visited, rc{r, c})
 	}
 
-	visited := map[rc]struct{}{}
+	// start DFSing
 	dfs(
-		m,
 		r, c,
-		visited,
-		string(m[r][c]),
-		t,
+		"",
+		t.root,
 	)
 
 	wordList := []string{}
