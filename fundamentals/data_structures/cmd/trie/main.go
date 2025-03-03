@@ -17,4 +17,5 @@ func main() {
 	fmt.Println("contains app: ", t.Search("app"))
 
 	fmt.Println("contains word prefixed with ap", t.StartsWith("ap"))
+	fmt.Println("contains word prefixed with el", t.StartsWith("el"))
 }

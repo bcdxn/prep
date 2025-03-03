@@ -1,16 +1,11 @@
 package ds
 
-type Trie struct {
-	root *TrieNode
-}
-
 func NewTrie() Trie {
 	return Trie{
 		root: newTrieNode(),
 	}
 }
 
-// Insert a word into the trie.
 func (t *Trie) Insert(word string) {
 	node := t.root
 
@@ -20,11 +15,9 @@ func (t *Trie) Insert(word string) {
 		}
 		node = node.children[c]
 	}
-
-	node.word = true
+	node.isWord = true
 }
 
-// Searches for a word in the Trie and returns true if it exists.
 func (t *Trie) Search(word string) bool {
 	node := t.root
 
@@ -35,14 +28,13 @@ func (t *Trie) Search(word string) bool {
 		node = node.children[c]
 	}
 
-	return node.word
+	return node.isWord
 }
 
-// Search the tree to see if there are words in the tree with the given prefix.
-func (t *Trie) StartsWith(word string) bool {
+func (t *Trie) StartsWith(prefix string) bool {
 	node := t.root
 
-	for _, c := range word {
+	for _, c := range prefix {
 		if _, ok := node.children[c]; !ok {
 			return false
 		}
@@ -52,14 +44,18 @@ func (t *Trie) StartsWith(word string) bool {
 	return true
 }
 
-type TrieNode struct {
-	children map[rune]*TrieNode
-	word     bool
+func newTrieNode() *trieNode {
+	return &trieNode{
+		children: make(map[rune]*trieNode, 26),
+		isWord:   false,
+	}
 }
 
-func newTrieNode() *TrieNode {
-	return &TrieNode{
-		children: map[rune]*TrieNode{},
-		word:     false,
-	}
+type Trie struct {
+	root *trieNode
+}
+
+type trieNode struct {
+	children map[rune]*trieNode
+	isWord   bool
 }
