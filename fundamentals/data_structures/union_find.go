@@ -14,8 +14,8 @@ func NewUnionFind(nodes []int) *UnionFind {
 	return &uf
 }
 
-// Find will return the parent of the given node (this is typically the root parent due to path
-// compression)
+// Find will return the root ancestor of the given node. For every search we'll compress the path,
+// flattening the tree and making subsequent calls to find more efficient.
 func (uf *UnionFind) Find(n int) int {
 	node := uf.parents[n]
 
@@ -27,6 +27,7 @@ func (uf *UnionFind) Find(n int) int {
 	return node
 }
 
+// Union the nodes within the same tree (at the root parent of each node).
 func (uf *UnionFind) Union(a, b int) bool {
 	p1 := uf.Find(a) // find parent of A
 	p2 := uf.Find(b) // find parent of B
