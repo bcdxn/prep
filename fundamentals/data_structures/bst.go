@@ -85,6 +85,28 @@ func (t *BST[T]) StringPostOrder() string {
 	return "[ " + strings.Join(bstStringPostOrder(t.Root, s), " ") + " ]"
 }
 
+func (t *BST[T]) StringPreOrderIterative() string {
+	res := []T{}
+	stack := []*BSTNode[T]{}
+
+	curr := t.Root
+
+	for curr != nil || len(stack) > 0 {
+		if curr == nil {
+			curr = stack[len(stack)-1]
+			stack = stack[0 : len(stack)-1] // pop
+		}
+		res = append(res, curr.Item)
+
+		if curr.Right != nil {
+			stack = append(stack, curr.Right) // push
+		}
+		curr = curr.Left
+	}
+
+	return fmt.Sprintf("%v", res)
+}
+
 func (t *BST[T]) PrintBFS() {
 	if t.Root == nil {
 		fmt.Println("[ ]")
