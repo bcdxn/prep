@@ -107,6 +107,29 @@ func (t *BST[T]) StringPreOrderIterative() string {
 	return fmt.Sprintf("%v", res)
 }
 
+func (t *BST[T]) StringInOrderIterative() string {
+	res := []T{}
+	stack := []*BSTNode[T]{}
+	curr := t.Root
+
+	for curr != nil || len(stack) > 0 {
+		// traverse left
+		if curr != nil {
+			stack = append(stack, curr)
+			curr = curr.Left
+			continue
+		}
+		// pop item from stack and add it to our in order result slice
+		curr = stack[len(stack)-1]
+		stack = stack[0 : len(stack)-1]
+		res = append(res, curr.Item)
+		// traverse right
+		curr = curr.Right
+	}
+
+	return fmt.Sprintf("%v", res)
+}
+
 func (t *BST[T]) PrintBFS() {
 	if t.Root == nil {
 		fmt.Println("[ ]")

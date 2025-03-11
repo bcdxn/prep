@@ -43,6 +43,7 @@ func main() {
 	fmt.Println("in order: ", t.StringInOrder())
 	fmt.Println("pre order: ", t.StringPreOrder())
 	fmt.Println("post order: ", t.StringPostOrder())
+	// t.PrintBFS()
 	fmt.Println("in order:")
-	t.PrintBFS()
+	fmt.Println(t.StringInOrderIterative())
 }
